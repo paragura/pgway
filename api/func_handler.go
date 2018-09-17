@@ -30,6 +30,12 @@ func CallFunc(handler interface{}, data map[string]string, bindingNamingStrategy
 	if methodType.NumIn() > 0 {
 		for i := 0; i < methodType.NumIn(); i++ {
 			p := methodType.In(i)
+
+			if p.Kind() != r.Struct {
+				in[i] = r.New(p).Elem()
+				continue
+			}
+
 			obj := CreateInstance(p, data, bindingNamingStrategy)
 			//
 			// validation with tag
