@@ -92,7 +92,7 @@ func CreateInstance(p r.Type, data map[string]string, bindingNamingStrategy Pgwa
 // validation with tags.  ( validate if written pgway_v: true)
 // return failed field name
 func ValidateInstance(obj interface{}) []string {
-	value := r.Indirect(r.ValueOf(obj))
+	value := r.ValueOf(obj)
 	valueType := value.Type()
 	var failedFieldNames []string
 
