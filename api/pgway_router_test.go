@@ -55,9 +55,7 @@ func BenchmarkPgwayRouter_trace(b *testing.B) {
 }
 
 func TestPgwayRouter_trace(t *testing.T) {
-	ShowNodes(tree.Nodes)
 	api, pathVariables := tree.tracePath(request)
-
 
 	expected := map[string]string{
 		"fefe": "aaa",

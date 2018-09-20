@@ -14,7 +14,7 @@ type PgwayRouteNode struct {
 	PathVariableKeyName string                     //
 	Nodes               map[string]*PgwayRouteNode //
 	IsEndNode           bool                       // is end (it means the routing exists.)
-	Api                 PgwayApi                   //
+	Api                 *PgwayApi                  //
 }
 
 const PathVariableNodePath = "/" // because / is not use for url node.
@@ -22,7 +22,7 @@ const PathVariableNodePath = "/" // because / is not use for url node.
 func CreateTree(server *PgwayServer) PgwayRouteTree {
 	tree := PgwayRouteTree{Nodes: map[string]*PgwayRouteNode{}}
 	for _, api := range server.Apis {
-		tree.addRoute(&api)
+		tree.addRoute(api)
 	}
 	return tree
 }
@@ -45,7 +45,7 @@ func (tree *PgwayRouteTree) tracePath(request *PgwayRequest) (*PgwayApi, map[str
 	pathVariables := map[string]string{}
 	targetNode := findNext(node, pathRunes, 0, len(request.Path), pathVariables)
 	if targetNode != nil && targetNode.IsEndNode {
-		return &targetNode.Api, pathVariables
+		return targetNode.Api, pathVariables
 	} else {
 		//
 		// request path is added but is not end node.
@@ -105,7 +105,7 @@ func getOrCreateNode(key string, nodes map[string]*PgwayRouteNode) *PgwayRouteNo
 	}
 }
 
-func (tree *PgwayRouteTree) addRoute(api *PgwayApi) {
+func (tree *PgwayRouteTree) addRoute(api PgwayApi) {
 	pathRunes := []rune(api.Path)
 	pathLen := len(api.Path)
 
@@ -143,7 +143,7 @@ func (tree *PgwayRouteTree) addRoute(api *PgwayApi) {
 	if currentNode.IsEndNode {
 		panic("[PGWay][Router] duplicate path")
 	} else {
-		currentNode.Api = *api
+		currentNode.Api = &api
 		currentNode.IsEndNode = true
 	}
 }
