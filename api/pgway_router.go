@@ -17,15 +17,7 @@ type PgwayRouteNode struct {
 	Api                 *PgwayApi                  //
 }
 
-const PathVariableNodePath = "/" // because / is not use for url node.
-
-func CreateTree(server *PgwayServer) PgwayRouteTree {
-	tree := PgwayRouteTree{Nodes: map[string]*PgwayRouteNode{}}
-	for _, api := range server.Apis {
-		tree.addRoute(api)
-	}
-	return tree
-}
+const pathVariableNodePath = "/" // because / is not use for url node.
 
 func ShowNodes(nodes map[string]*PgwayRouteNode) {
 	if len(nodes) == 0 {
@@ -82,7 +74,7 @@ func findNext(node *PgwayRouteNode, pathRunes []rune, i int, pathLen int, pathVa
 	}
 	//
 	// check path(variable type).
-	currentNode = node.Nodes[PathVariableNodePath]
+	currentNode = node.Nodes[pathVariableNodePath]
 	if currentNode != nil {
 		pathVariables[currentNode.PathVariableKeyName] = pathPartStr
 		return findNext(currentNode, pathRunes, i, pathLen, pathVariables)
@@ -123,8 +115,8 @@ func (tree *PgwayRouteTree) addRoute(api PgwayApi) {
 
 		if pathPart[0] == ':' {
 			// path variable
-			currentNode = getOrCreateNode(PathVariableNodePath, currentNode.Nodes)
-			currentNode.Path = PathVariableNodePath
+			currentNode = getOrCreateNode(pathVariableNodePath, currentNode.Nodes)
+			currentNode.Path = pathVariableNodePath
 			pathVariableKeyName := string(pathPart[1:])
 			if currentNode.IsPathVariable {
 				if currentNode.PathVariableKeyName != pathVariableKeyName {

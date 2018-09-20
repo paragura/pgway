@@ -7,34 +7,35 @@ import (
 	"testing"
 )
 
-type TestStruct struct {
+type testStruct struct {
 	UserId string
 	Name   string
+	Body   string
 }
 
-type TestResponse struct {
+type testResponse struct {
 	Body string
 }
 
 func TestPgwayServer_Handle(t *testing.T) {
 
 	api1 := PgwayApi{
-		Path:       "/test1",
+		Path:       "/test1/fe",
 		HTTPMethod: http.MethodGet,
-		Handler:    func(testStruct TestStruct) TestResponse { return TestResponse{testStruct.UserId} },
+		Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 	}
 
 	api2 := PgwayApi{
-		Path:       "/test2",
+		Path:       "/test2/aa",
 		HTTPMethod: http.MethodGet,
-		Handler:    func(testStruct TestStruct) TestResponse { return TestResponse{testStruct.UserId} },
+		Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 	}
 
 	api3 := PgwayApi{
-		Path:       "/test2",
+		Path:       "/test2/:body",
 		HTTPMethod: http.MethodPost,
-		Handler: func(testStruct TestStruct) TestResponse {
-			return TestResponse{testStruct.UserId + "_" + testStruct.Name}
+		Handler: func(testStruct testStruct) testResponse {
+			return testResponse{testStruct.UserId + "_" + testStruct.Name + "_" + testStruct.Body}
 		},
 	}
 
@@ -42,7 +43,7 @@ func TestPgwayServer_Handle(t *testing.T) {
 	queryParameters["user_id"] = "1"
 
 	request := &PgwayRequest{
-		Path:            "/test2",
+		Path:            "/test2/fefe",
 		HTTPMethod:      http.MethodPost,
 		QueryParameters: queryParameters,
 		Body:            "{\"name\" : \"namae\" }",
@@ -55,10 +56,10 @@ func TestPgwayServer_Handle(t *testing.T) {
 
 	response := server.handle(request)
 
-	testResponse := &TestResponse{}
+	testResponse := &testResponse{}
 
 	err := json.Unmarshal([]byte(response.Body), testResponse)
 	assert.NoError(t, err)
-	assert.Equal(t, "1_namae", testResponse.Body)
+	assert.Equal(t, "1_namae_fefe", testResponse.Body)
 
 }

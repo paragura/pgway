@@ -1,25 +1,24 @@
 package api
 
 import (
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 )
 
-var server = PgwayServer{
+var serverBenchmark = PgwayServer{
 	Apis: []PgwayApi{
 		{
-			Path:       "/test1/:fefe/test",
+			Path:       "/test1/b/test",
 			HTTPMethod: http.MethodGet,
 			Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 		},
 		{
-			Path:       "/test1/:fefe",
+			Path:       "/test1/fefe",
 			HTTPMethod: http.MethodGet,
 			Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 		},
 		{
-			Path:       "/test1/:fefe/aaaa",
+			Path:       "/test1/fefe/aaaa",
 			HTTPMethod: http.MethodGet,
 			Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 		},
@@ -29,12 +28,12 @@ var server = PgwayServer{
 			Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 		},
 		{
-			Path:       "/test2/:id",
+			Path:       "/test2/id",
 			HTTPMethod: http.MethodGet,
 			Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 		},
 		{
-			Path:       "/test2/:id2",
+			Path:       "/test2/id2",
 			HTTPMethod: http.MethodPost,
 			Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 		},
@@ -42,24 +41,38 @@ var server = PgwayServer{
 	BindingNamingStrategy: BindingStrategyCamelCaseToSnakeCase,
 }
 
-var tree = server.BuildRoutingTree()
-var request = &PgwayRequest{
-	Path:       "/test1/aaa/test",
-	HTTPMethod: http.MethodGet,
-}
+func BenchmarkPgwayServer_Handle(b *testing.B) {
 
-func BenchmarkPgwayRouter_trace(b *testing.B) {
+	queryParameters := map[string]string{}
+	queryParameters["name"] = "namae"
+
+	request := &PgwayRequest{
+		Path:            "/test1/fefe/aaaa",
+		HTTPMethod:      http.MethodGet,
+		QueryParameters: queryParameters,
+		Body:            "{\"body\" : \"body\" }",
+	}
+
 	for i := 0; i < b.N; i++ {
-		tree.tracePath(request)
+		serverBenchmark.handle(request)
 	}
+
 }
 
-func TestPgwayRouter_trace(t *testing.T) {
-	api, pathVariables := tree.tracePath(request)
+func BenchmarkPgwayServer_HandleOld(b *testing.B) {
 
-	expected := map[string]string{
-		"fefe": "aaa",
+	queryParameters := map[string]string{}
+	queryParameters["name"] = "namae"
+
+	request := &PgwayRequest{
+		Path:            "/test1/fefe/aaaa",
+		HTTPMethod:      http.MethodGet,
+		QueryParameters: queryParameters,
+		Body:            "{\"body\" : \"body\" }",
 	}
-	assert.Equal(t, server.Apis[0].Path, api.Path)
-	assert.Equal(t, expected, pathVariables)
+
+	for i := 0; i < b.N; i++ {
+		serverBenchmark.handleOld(request)
+	}
+
 }
