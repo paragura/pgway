@@ -10,6 +10,7 @@ type PgwayRequest struct {
 	HTTPMethod      string            //
 	RequestData     map[string]string //
 	QueryParameters map[string]string //
+	PathVariables   map[string]string //
 	Headers         map[string]string //
 	Body            string            //
 }
@@ -38,6 +39,10 @@ func (req *PgwayRequest) initRequestData() error {
 		for key, value := range postData {
 			data[key] = value
 		}
+	}
+
+	for key, value := range req.PathVariables {
+		data[key] = value
 	}
 
 	req.RequestData = data
