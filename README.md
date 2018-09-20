@@ -2,6 +2,12 @@
 
 this is my sample with golang reflection project.
 
+# support feature
+. High Speed Routing
+. Auto binding Model and response
+. Path Variable
+... and improving now!
+
 #how to use
 
 
@@ -35,7 +41,7 @@ func PgwayHandler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 
 	apis := api.PgwayApis{
 		api.PgwayApi{
-			Path:       "/api1",
+			Path:       "/api1/:user_id",
 			HTTPMethod: http.MethodGet,
 			Handler:    api1,
 		},
