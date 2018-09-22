@@ -1,25 +1,22 @@
-package api
+package pgway
 
-type PgwayRoute struct {
-}
-
-type PgwayRouteTree struct {
-	Nodes       map[string]*PgwayRouteNode
+type RouteTree struct {
+	Nodes       map[string]*RouteNode
 	initialized bool
 }
 
-type PgwayRouteNode struct {
-	Path                string                     // pathの一部
-	IsPathVariable      bool                       //
-	PathVariableKeyName string                     //
-	Nodes               map[string]*PgwayRouteNode //
-	IsEndNode           bool                       // is end (it means the routing exists.)
-	Api                 *PgwayApi                  //
+type RouteNode struct {
+	Path                string                // pathの一部
+	IsPathVariable      bool                  //
+	PathVariableKeyName string                //
+	Nodes               map[string]*RouteNode //
+	IsEndNode           bool                  // is end (it means the routing exists.)
+	Api                 *Api                  //
 }
 
 const pathVariableNodePath = "/" // because / is not use for url node.
 
-func ShowNodes(nodes map[string]*PgwayRouteNode) {
+func ShowNodes(nodes map[string]*RouteNode) {
 	if len(nodes) == 0 {
 		return
 	}
@@ -30,7 +27,7 @@ func ShowNodes(nodes map[string]*PgwayRouteNode) {
 	}
 }
 
-func (tree *PgwayRouteTree) tracePath(request *PgwayRequest) (*PgwayApi, map[string]string) {
+func (tree *RouteTree) tracePath(request *Request) (*Api, map[string]string) {
 
 	pathRunes := []rune(request.Path)
 	node := tree.Nodes[request.HTTPMethod]
@@ -45,7 +42,7 @@ func (tree *PgwayRouteTree) tracePath(request *PgwayRequest) (*PgwayApi, map[str
 	}
 }
 
-func findNext(node *PgwayRouteNode, pathRunes []rune, i int, pathLen int, pathVariables map[string]string) *PgwayRouteNode {
+func findNext(node *RouteNode, pathRunes []rune, i int, pathLen int, pathVariables map[string]string) *RouteNode {
 	if node == nil {
 		return nil
 	}
@@ -83,21 +80,21 @@ func findNext(node *PgwayRouteNode, pathRunes []rune, i int, pathLen int, pathVa
 	}
 }
 
-func getOrCreateNode(key string, nodes map[string]*PgwayRouteNode) *PgwayRouteNode {
+func getOrCreateNode(key string, nodes map[string]*RouteNode) *RouteNode {
 	if node, ok := nodes[key]; ok {
 		return node
 	} else {
-		newNode := &PgwayRouteNode{
+		newNode := &RouteNode{
 			IsPathVariable: false,
 			IsEndNode:      false,
-			Nodes:          map[string]*PgwayRouteNode{},
+			Nodes:          map[string]*RouteNode{},
 		}
 		nodes[key] = newNode
 		return newNode
 	}
 }
 
-func (tree *PgwayRouteTree) addRoute(api PgwayApi) {
+func (tree *RouteTree) addRoute(api Api) {
 	pathRunes := []rune(api.Path)
 	pathLen := len(api.Path)
 

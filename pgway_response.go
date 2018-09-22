@@ -1,6 +1,6 @@
-package api
+package pgway
 
-type PgwayResponse struct {
+type Response struct {
 	StatusCode int
 	Headers    map[string]string
 	Body       string

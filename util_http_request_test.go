@@ -1,4 +1,4 @@
-package util
+package pgway
 
 import (
 	"github.com/stretchr/testify/assert"

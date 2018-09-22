@@ -1,4 +1,4 @@
-package api
+package pgway
 
 import (
 	"encoding/json"
@@ -19,19 +19,19 @@ type testResponse struct {
 
 func TestPgwayServer_Handle(t *testing.T) {
 
-	api1 := PgwayApi{
+	api1 := Api{
 		Path:       "/test1/fe",
 		HTTPMethod: http.MethodGet,
 		Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 	}
 
-	api2 := PgwayApi{
+	api2 := Api{
 		Path:       "/test2/aa",
 		HTTPMethod: http.MethodGet,
 		Handler:    func(testStruct testStruct) testResponse { return testResponse{testStruct.UserId} },
 	}
 
-	api3 := PgwayApi{
+	api3 := Api{
 		Path:       "/test2/:body",
 		HTTPMethod: http.MethodPost,
 		Handler: func(testStruct testStruct) testResponse {
@@ -42,15 +42,15 @@ func TestPgwayServer_Handle(t *testing.T) {
 	queryParameters := map[string]string{}
 	queryParameters["user_id"] = "1"
 
-	request := &PgwayRequest{
+	request := &Request{
 		Path:            "/test2/fefe",
 		HTTPMethod:      http.MethodPost,
 		QueryParameters: queryParameters,
 		Body:            "{\"name\" : \"namae\" }",
 	}
 
-	server := PgwayServer{
-		Apis:                  []PgwayApi{api1, api2, api3},
+	server := Server{
+		Apis:                  []Api{api1, api2, api3},
 		BindingNamingStrategy: BindingStrategyCamelCaseToSnakeCase,
 	}
 

@@ -1,4 +1,4 @@
-package api
+package pgway
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestPgwayApi_IsSamePath(t *testing.T) {
-	api := PgwayApi{
+	api := Api{
 		Path: "fe",
 	}
 

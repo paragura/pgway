@@ -1,4 +1,4 @@
-package api
+package pgway
 
 import (
 	"github.com/huandu/xstrings"

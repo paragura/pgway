@@ -1,10 +1,10 @@
-package api
+package pgway
 
 import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func (req *PgwayRequest) WithAwsAPIGatewayProxyRequest(baseRequest *events.APIGatewayProxyRequest) {
+func (req *Request) WithAwsAPIGatewayProxyRequest(baseRequest *events.APIGatewayProxyRequest) {
 	req.Path = baseRequest.Path
 	req.QueryParameters = baseRequest.QueryStringParameters
 	req.HTTPMethod = baseRequest.HTTPMethod
@@ -13,7 +13,7 @@ func (req *PgwayRequest) WithAwsAPIGatewayProxyRequest(baseRequest *events.APIGa
 
 }
 
-func (resp *PgwayResponse) CreateAwsAPIGatewayProxyResponse() events.APIGatewayProxyResponse {
+func (resp *Response) CreateAwsAPIGatewayProxyResponse() events.APIGatewayProxyResponse {
 	return events.APIGatewayProxyResponse{
 		StatusCode: resp.StatusCode,
 		Headers:    resp.Headers,
@@ -21,9 +21,9 @@ func (resp *PgwayResponse) CreateAwsAPIGatewayProxyResponse() events.APIGatewayP
 	}
 }
 
-func (server *PgwayServer) HandleAPIGateway(apiGatewayRequest events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+func (server *Server) HandleAPIGateway(apiGatewayRequest events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
 
-	request := &PgwayRequest{}
+	request := &Request{}
 	request.WithAwsAPIGatewayProxyRequest(&apiGatewayRequest)
 	response := server.handle(request)
 	return response.CreateAwsAPIGatewayProxyResponse()

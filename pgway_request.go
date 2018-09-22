@@ -1,11 +1,11 @@
-package api
+package pgway
 
 import (
 	"encoding/json"
 	"net/http"
 )
 
-type PgwayRequest struct {
+type Request struct {
 	Path            string            //
 	HTTPMethod      string            //
 	RequestData     map[string]string //
@@ -17,7 +17,7 @@ type PgwayRequest struct {
 
 //
 // integrate queryData with postData
-func (req *PgwayRequest) initRequestData() error {
+func (req *Request) initRequestData() error {
 
 	data := make(map[string]string)
 

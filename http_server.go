@@ -1,4 +1,4 @@
-package api
+package pgway
 
 import (
 	"io/ioutil"
@@ -11,7 +11,7 @@ type PgwayHttpConf struct {
 	Port int
 }
 
-func (req *PgwayRequest) WitHttpRequest(baseRequest *http.Request) {
+func (req *Request) WitHttpRequest(baseRequest *http.Request) {
 	req.Path = baseRequest.URL.Path
 	req.HTTPMethod = baseRequest.Method
 
@@ -39,7 +39,7 @@ func (req *PgwayRequest) WitHttpRequest(baseRequest *http.Request) {
 	req.Body = string(b)
 }
 
-func (resp *PgwayResponse) WriteHttpResponse(w http.ResponseWriter) {
+func (resp *Response) WriteHttpResponse(w http.ResponseWriter) {
 
 	//
 	// status code
@@ -56,21 +56,21 @@ func (resp *PgwayResponse) WriteHttpResponse(w http.ResponseWriter) {
 
 }
 
-func (server PgwayServer) ServeHTTP(w http.ResponseWriter, httpRequest *http.Request) {
-	request := &PgwayRequest{}
+func (server Server) ServeHTTP(w http.ResponseWriter, httpRequest *http.Request) {
+	request := &Request{}
 	request.WitHttpRequest(httpRequest)
 	response := server.handle(request)
 	response.WriteHttpResponse(w)
 }
 
-func (server *PgwayServer) BootHttpServerWithDefaultConfig() {
+func (server *Server) BootHttpServerWithDefaultConfig() {
 	conf := PgwayHttpConf{
 		Port: 8080,
 	}
 	server.BootHttpServer(conf)
 }
 
-func (server *PgwayServer) BootHttpServer(conf PgwayHttpConf) {
+func (server *Server) BootHttpServer(conf PgwayHttpConf) {
 
 	addr := ":" + strconv.Itoa(conf.Port)
 	http.ListenAndServe(addr, server)

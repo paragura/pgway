@@ -1,4 +1,4 @@
-package api
+package pgway
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -10,7 +10,7 @@ func TestPgwayRequest_InitRequestData_Get(t *testing.T) {
 	queryParameters := map[string]string{}
 	queryParameters["query"] = "queryData"
 
-	request := PgwayRequest{
+	request := Request{
 		HTTPMethod:      http.MethodGet,
 		QueryParameters: queryParameters,
 		Body:            "{ 'body' : 'bodyData' }",
@@ -27,7 +27,7 @@ func TestPgwayRequest_InitRequestData_POST(t *testing.T) {
 	queryParameters := map[string]string{}
 	queryParameters["query"] = "queryData"
 
-	request := PgwayRequest{
+	request := Request{
 		HTTPMethod:      http.MethodPost,
 		QueryParameters: queryParameters,
 		Body:            "{ \"body\" : \"bodyData\" }",
