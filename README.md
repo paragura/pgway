@@ -6,15 +6,23 @@ You can use this for:
 * APIGateway
 * RealtimeCommunication-WebSocket or WebRTC(now developing...)
 
+
+
+
+- [Support Feature](#support-feature)
+- [Quick Start](#quick-start)
+- [Http Sample](#http-sample)
+- [AWSApiGateway Sample](#aws-apigateway-sample)
+
 個人的にはすごい使いやすいと思います。
 
-# support feature
+## support feature
 * High Speed Routing (maybe faster than GIN :))
 * Auto binding Model and response
 * Path Parameters ( in future,RegExp Validation will be added..)
 ... and improving now!
 
-#Quick Start
+## Quick Start
 
 you can install like below:
 
@@ -22,6 +30,7 @@ you can install like below:
 go get -t paragura/pgway
 ```
 
+## Http Sample
 this is the sample code for PGWay as http server
 
 ```
@@ -75,7 +84,7 @@ func main() {
 
 check sample/http_sample/main.go
 
-
+## Aws ApiGateway Sample
 this is the sample code for PGWay as api gateway server.
 ```
 
