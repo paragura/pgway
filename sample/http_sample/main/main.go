@@ -36,6 +36,26 @@ func main() {
 			HTTPMethod: http.MethodGet,
 			Handler:    api1,
 		},
+		pgway.Api{
+			Path:       "/api2/:user_id",
+			HTTPMethod: http.MethodGet,
+			Handler:    api1,
+		},
+		pgway.Api{
+			Path:       "/api1/:user_id",
+			HTTPMethod: http.MethodPost,
+			Handler:    api1,
+		},
+		pgway.Api{
+			Path:       "/api1/:user_id/fef",
+			HTTPMethod: http.MethodGet,
+			Handler:    api1,
+		},
+		pgway.Api{
+			Path:       "/api3/test",
+			HTTPMethod: http.MethodGet,
+			Handler:    api1,
+		},
 	}
 
 	server := pgway.Server{
