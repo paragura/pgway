@@ -3,35 +3,9 @@ package main
 import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/awslabs/aws-lambda-go-api-proxy/gin"
-	"github.com/gin-gonic/gin"
 	"github.com/paragura/pgway"
-	"log"
 	"net/http"
 )
-
-var initialized = false
-var ginLambda *ginadapter.GinLambda
-
-func HandlerByAws(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
-	if !initialized {
-		// stdout and stderr are sent to AWS CloudWatch Logs
-		log.Printf("Gin cold start")
-		r := gin.Default()
-		r.GET("/ping", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "pong",
-			})
-		})
-
-		ginLambda = ginadapter.New(r)
-		initialized = true
-	}
-
-	// If no name is provided in the HTTP request body, throw an error
-	return ginLambda.Proxy(req)
-}
 
 type TestParam struct {
 	UserId string
@@ -74,7 +48,6 @@ func PgwayHandler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 }
 
 func main() {
-	// lambda.Start(HandlerByAws)
 
 	lambda.Start(PgwayHandler)
 }
