@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-gonic/gin"
+	"github.com/paragura/pgway"
 	"log"
 	"net/http"
 )
@@ -45,7 +46,7 @@ type TestResponse struct {
 func api1(testParam TestParam) interface{} {
 
 	if testParam.UserId == "1" {
-		return ApiException{ErrorCode: InvalidParameters, Message: "userId 1 is not allowed."}
+		return pgway.ApiException{ErrorCode: pgway.InvalidParameters, Message: "userId 1 is not allowed."}
 	}
 
 	response := TestResponse{
@@ -56,17 +57,17 @@ func api1(testParam TestParam) interface{} {
 
 func PgwayHandler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	apis := api.PgwayApis{
-		api.PgwayApi{
+	apis := pgway.Apis{
+		pgway.Api{
 			Path:       "/api1",
 			HTTPMethod: http.MethodGet,
 			Handler:    api1,
 		},
 	}
 
-	server := api.PgwayServer{
+	server := pgway.Server{
 		Apis:                  apis,
-		BindingNamingStrategy: api.BindingStrategyCamelCaseToSnakeCase, // you can bind with the query parameters like this "/test?user_id=1" -> UserId = 1
+		BindingNamingStrategy: pgway.BindingStrategyCamelCaseToSnakeCase, // you can bind with the query parameters like this "/test?user_id=1" -> UserId = 1
 	}
 
 	return server.HandleAPIGateway(req), nil
