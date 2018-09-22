@@ -1,12 +1,12 @@
-package api
+package pgway
 
 import (
 	"net/http"
 	"testing"
 )
 
-var serverBenchmark = PgwayServer{
-	Apis: []PgwayApi{
+var serverBenchmark = Server{
+	Apis: []Api{
 		{
 			Path:       "/test1/b/test",
 			HTTPMethod: http.MethodGet,
@@ -46,7 +46,7 @@ func BenchmarkPgwayServer_Handle(b *testing.B) {
 	queryParameters := map[string]string{}
 	queryParameters["name"] = "namae"
 
-	request := &PgwayRequest{
+	request := &Request{
 		Path:            "/test1/fefe/aaaa",
 		HTTPMethod:      http.MethodGet,
 		QueryParameters: queryParameters,
@@ -64,7 +64,7 @@ func BenchmarkPgwayServer_HandleOld(b *testing.B) {
 	queryParameters := map[string]string{}
 	queryParameters["name"] = "namae"
 
-	request := &PgwayRequest{
+	request := &Request{
 		Path:            "/test1/fefe/aaaa",
 		HTTPMethod:      http.MethodGet,
 		QueryParameters: queryParameters,

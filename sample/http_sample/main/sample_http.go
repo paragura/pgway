@@ -1,9 +1,8 @@
 package main
 
 import (
+	"github.com/paragura/pgway"
 	"net/http"
-	"pgway/api"
-	"pgway/model"
 )
 
 type TestParam struct {
@@ -19,7 +18,7 @@ type TestResponse struct {
 func api1(testParam TestParam) interface{} {
 
 	if testParam.UserId == "1" {
-		return model.ApiException{ErrorCode: model.InvalidParameters, Message: "userId 1 is not allowed."}
+		return pgway.ApiException{ErrorCode: pgway.InvalidParameters, Message: "userId 1 is not allowed."}
 	}
 
 	response := TestResponse{
@@ -31,17 +30,17 @@ func api1(testParam TestParam) interface{} {
 func main() {
 	// lambda.Start(HandlerByAws)
 
-	apis := api.PgwayApis{
-		api.PgwayApi{
+	apis := pgway.Apis{
+		pgway.Api{
 			Path:       "/api1/:user_id",
 			HTTPMethod: http.MethodGet,
 			Handler:    api1,
 		},
 	}
 
-	server := api.PgwayServer{
+	server := pgway.Server{
 		Apis:                  apis,
-		BindingNamingStrategy: api.BindingStrategyCamelCaseToSnakeCase, // you can bind with the query parameters like this "/test?user_id=1" -> UserId = 1
+		BindingNamingStrategy: pgway.BindingStrategyCamelCaseToSnakeCase, // you can bind with the query parameters like this "/test?user_id=1" -> UserId = 1
 	}
 	server.BootHttpServerWithDefaultConfig()
 }

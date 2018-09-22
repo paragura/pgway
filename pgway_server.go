@@ -1,23 +1,21 @@
-package api
+package pgway
 
 import (
 	"net/http"
-	"pgway/model"
-	"pgway/util"
 	"sort"
 	"strings"
 )
 
-type PgwayServer struct {
-	Apis                      PgwayApis
+type Server struct {
+	Apis                      Apis
 	ValidationFailedProcessor func([]string) interface{} // called when validation failed
 	BindingNamingStrategy     PgwayBindingNamingStrategy
-	Tree                      PgwayRouteTree
+	Tree                      RouteTree
 	Compiled                  bool
 }
 
-func (server *PgwayServer) BuildRoutingTree() PgwayRouteTree {
-	tree := PgwayRouteTree{Nodes: map[string]*PgwayRouteNode{}}
+func (server *Server) BuildRoutingTree() RouteTree {
+	tree := RouteTree{Nodes: map[string]*RouteNode{}}
 	for _, api := range server.Apis {
 		tree.addRoute(api)
 	}
@@ -26,26 +24,26 @@ func (server *PgwayServer) BuildRoutingTree() PgwayRouteTree {
 
 //
 // setup server (build routing tree..)
-func (server *PgwayServer) Compile() {
+func (server *Server) Compile() {
 	server.Tree = server.BuildRoutingTree()
 	server.Compiled = true
 }
 
-func (server *PgwayServer) handle(request *PgwayRequest) PgwayResponse {
+func (server *Server) handle(request *Request) Response {
 	if !server.Compiled {
 		server.Compile()
 	}
-	request.Path = util.UrlSanitize(request.Path)
+	request.Path = UrlSanitize(request.Path)
 	apiPtr, pathVariables := server.Tree.tracePath(request)
 
 	if apiPtr == nil {
 		//
 		// api not found
-		return server.createResponse(model.ApiException{ErrorCode: model.ApiNotFound})
+		return server.createResponse(ApiException{ErrorCode: ApiNotFound})
 	}
 	request.PathVariables = pathVariables
 	if err := request.initRequestData(); err != nil {
-		exception := model.ApiException{Message: "unsupported type post data.:" + request.Body, Error: err, ErrorCode: model.InternalServerError}
+		exception := ApiException{Message: "unsupported type post data.:" + request.Body, Error: err, ErrorCode: InternalServerError}
 		return server.createResponse(exception)
 	}
 	//
@@ -57,15 +55,15 @@ func (server *PgwayServer) handle(request *PgwayRequest) PgwayResponse {
 
 //
 // deprecated (only for test)
-func (server *PgwayServer) handleOld(request *PgwayRequest) PgwayResponse {
+func (server *Server) handleOld(request *Request) Response {
 	sort.Sort(server.Apis)
 
 	if err := request.initRequestData(); err != nil {
-		exception := model.ApiException{Message: "unsupported type post data.:" + request.Body, Error: err, ErrorCode: model.InternalServerError}
+		exception := ApiException{Message: "unsupported type post data.:" + request.Body, Error: err, ErrorCode: InternalServerError}
 		return server.createResponse(exception)
 	}
 
-	sanitizedPath := util.UrlSanitize(request.Path)
+	sanitizedPath := UrlSanitize(request.Path)
 
 	for _, api := range server.Apis {
 		if api.IsSamePath(sanitizedPath) && api.HTTPMethod == request.HTTPMethod {
@@ -76,20 +74,20 @@ func (server *PgwayServer) handleOld(request *PgwayRequest) PgwayResponse {
 		}
 	}
 
-	return server.createResponse(model.ApiException{ErrorCode: model.ApiNotFound})
+	return server.createResponse(ApiException{ErrorCode: ApiNotFound})
 }
 
-func (server *PgwayServer) createResponse(baseResponse interface{}) PgwayResponse {
+func (server *Server) createResponse(baseResponse interface{}) Response {
 
-	response := PgwayResponse{
+	response := Response{
 		StatusCode: http.StatusOK,
 	}
 
-	if exception, ok := baseResponse.(model.ApiException); ok {
+	if exception, ok := baseResponse.(ApiException); ok {
 		//
 		// error response
 		response.StatusCode = exception.ErrorCode.HttpStatus
-		body, err := util.CreateJsonString(exception.ErrorCode)
+		body, err := CreateJsonString(exception.ErrorCode)
 		if err != nil {
 			panic(err)
 		}
@@ -97,16 +95,16 @@ func (server *PgwayServer) createResponse(baseResponse interface{}) PgwayRespons
 	} else {
 		//
 		// normal response
-		body, err := util.CreateJsonString(baseResponse)
+		body, err := CreateJsonString(baseResponse)
 		if err != nil {
-			return server.createResponse(model.ApiException{Error: err, ErrorCode: model.InternalServerError})
+			return server.createResponse(ApiException{Error: err, ErrorCode: InternalServerError})
 		}
 		response.Body = body
 	}
 	return response
 }
 
-func (server *PgwayServer) Exec(api *PgwayApi, request *PgwayRequest) interface{} { //
+func (server *Server) Exec(api *Api, request *Request) interface{} { //
 
 	validationFailedFunc := server.ValidationFailedProcessor
 	if validationFailedFunc == nil {
@@ -118,5 +116,5 @@ func (server *PgwayServer) Exec(api *PgwayApi, request *PgwayRequest) interface{
 
 func DefaultValidationProcessor(failedFields []string) interface{} {
 	message := "[validation][failed][Fields]" + strings.Join(failedFields, ",")
-	return model.ApiException{Message: message, ErrorCode: model.InvalidParameters}
+	return ApiException{Message: message, ErrorCode: InvalidParameters}
 }

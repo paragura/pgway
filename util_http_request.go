@@ -1,4 +1,4 @@
-package util
+package pgway
 
 func UrlSanitize(pathStr string) string {
 	var retRunes []rune

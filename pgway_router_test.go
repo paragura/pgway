@@ -1,4 +1,4 @@
-package api
+package pgway
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-var server = PgwayServer{
-	Apis: []PgwayApi{
+var server = Server{
+	Apis: []Api{
 		{
 			Path:       "/test1/:fefe/test",
 			HTTPMethod: http.MethodGet,
@@ -43,7 +43,7 @@ var server = PgwayServer{
 }
 
 var tree = server.BuildRoutingTree()
-var request = &PgwayRequest{
+var request = &Request{
 	Path:       "/test1/aaa/test",
 	HTTPMethod: http.MethodGet,
 }

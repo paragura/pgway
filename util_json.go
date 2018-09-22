@@ -1,4 +1,4 @@
-package util
+package pgway
 
 import (
 	"encoding/json"

@@ -28,7 +28,7 @@ type TestResponse struct {
 func api1(testParam TestParam) interface{} {
 
 	if testParam.UserId == "1" {
-		return model.ApiException{ErrorCode: model.InvalidParameters, Message: "userId 1 is not allowed."}
+		return ApiException{ErrorCode: InvalidParameters, Message: "userId 1 is not allowed."}
 	}
 
 	response := TestResponse{

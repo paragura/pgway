@@ -1,6 +1,6 @@
-package api
+package pgway
 
-type PgwayApi struct {
+type Api struct {
 	Path       string      // api path
 	HTTPMethod string      // httpMethod
 	Handler    interface{} // api method handler
@@ -9,6 +9,6 @@ type PgwayApi struct {
 
 //
 // TODO: path variable
-func (api PgwayApi) IsSamePath(path string) bool {
+func (api Api) IsSamePath(path string) bool {
 	return path == api.Path
 }
