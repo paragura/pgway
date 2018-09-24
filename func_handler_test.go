@@ -11,8 +11,9 @@ type A struct {
 	Name   string
 }
 
-func sampleFunc(a A) interface{} {
-	println(a.Name)
+func sampleFunc(a A, request *Request) interface{} {
+	println("name:" + a.Name)
+	println("request:" + request.RequestData["name"])
 	return a.UserId
 }
 func TestCallFunc_Normal(t *testing.T) {
@@ -24,7 +25,8 @@ func TestCallFunc_Normal(t *testing.T) {
 	}
 
 	// test
-	ret := CallFunc(sampleFunc, data, BindingStrategyCamelCaseToSnakeCase, nil)
+	request := &Request{RequestData: data}
+	ret := CallFunc(sampleFunc, request, BindingStrategyCamelCaseToSnakeCase, nil)
 
 	// assert
 	assert.Equal(t, userId, ret)
@@ -39,7 +41,8 @@ func TestCallFunc_FailedValidation(t *testing.T) {
 	validationFailedResult := "validation"
 	//
 	// test
-	ret := CallFunc(sampleFunc, data, BindingStrategyKeep, func(a []string) interface{} {
+	request := &Request{RequestData: data}
+	ret := CallFunc(sampleFunc, request, BindingStrategyKeep, func(a []string) interface{} {
 		println("validationFailed:" + strings.Join(a, ","))
 		return validationFailedResult
 	})

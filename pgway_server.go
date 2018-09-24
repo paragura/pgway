@@ -111,7 +111,7 @@ func (server *Server) Exec(api *Api, request *Request) interface{} { //
 		validationFailedFunc = DefaultValidationProcessor
 	}
 
-	return CallFunc(api.Handler, request.RequestData, server.BindingNamingStrategy, validationFailedFunc)
+	return CallFunc(api.Handler, request, server.BindingNamingStrategy, validationFailedFunc)
 }
 
 func DefaultValidationProcessor(failedFields []string) interface{} {

@@ -17,7 +17,7 @@ const (
 const PgwayValidationTagName = "pgway_v"
 const PgwayBindingTagName = "pgway_binding"
 
-func CallFunc(handler interface{}, data map[string]string, bindingNamingStrategy PgwayBindingNamingStrategy, validationFailedProcessor func([]string) interface{}) interface{} {
+func CallFunc(handler interface{}, request *Request, bindingNamingStrategy PgwayBindingNamingStrategy, validationFailedProcessor func([]string) interface{}) interface{} {
 	method := r.ValueOf(handler)
 	if method.Kind() != r.Func {
 		panic("[pgway]definition error. Handler must be a func")
@@ -31,23 +31,24 @@ func CallFunc(handler interface{}, data map[string]string, bindingNamingStrategy
 		for i := 0; i < methodType.NumIn(); i++ {
 			p := methodType.In(i)
 
-			if p.Kind() != r.Struct {
+			if p.Kind() == r.Ptr && p.String() == "*pgway.Request" {
+				in[i] = r.ValueOf(request)
+			} else if p.Kind() != r.Struct {
 				in[i] = r.New(p).Elem()
-				continue
-			}
-
-			obj := CreateInstance(p, data, bindingNamingStrategy)
-			//
-			// validation with tag
-			// validation runs when  pgway_v: true written on struct tags
-			failedFields := ValidateInstance(obj)
-			if len(failedFields) > 0 {
+			} else {
+				obj := CreateInstance(p, request.RequestData, bindingNamingStrategy)
 				//
-				// failed validation.
-				return validationFailedProcessor(failedFields)
-			}
+				// validation with tag
+				// validation runs when  pgway_v: true written on struct tags
+				failedFields := ValidateInstance(obj)
+				if len(failedFields) > 0 {
+					//
+					// failed validation.
+					return validationFailedProcessor(failedFields)
+				}
 
-			in[i] = r.ValueOf(obj)
+				in[i] = r.ValueOf(obj)
+			}
 		}
 	}
 
