@@ -2,14 +2,13 @@ package pgway
 
 import (
 	"net/http"
-	"sort"
 	"strings"
 )
 
 type Server struct {
 	Apis                      Apis
 	ValidationFailedProcessor func([]string) interface{} // called when validation failed
-	BindingNamingStrategy     PgwayBindingNamingStrategy
+	BindingNamingStrategy     BindingNamingStrategy
 	Tree                      RouteTree
 	Compiled                  bool
 }
@@ -51,30 +50,6 @@ func (server *Server) handle(request *Request) Response {
 	resp := server.Exec(apiPtr, request)
 	return server.createResponse(resp)
 
-}
-
-//
-// deprecated (only for test)
-func (server *Server) handleOld(request *Request) Response {
-	sort.Sort(server.Apis)
-
-	if err := request.initRequestData(); err != nil {
-		exception := ApiException{Message: "unsupported type post data.:" + request.Body, Error: err, ErrorCode: InternalServerError}
-		return server.createResponse(exception)
-	}
-
-	sanitizedPath := UrlSanitize(request.Path)
-
-	for _, api := range server.Apis {
-		if api.IsSamePath(sanitizedPath) && api.HTTPMethod == request.HTTPMethod {
-			//
-			// found handler
-			resp := server.Exec(&api, request)
-			return server.createResponse(resp)
-		}
-	}
-
-	return server.createResponse(ApiException{ErrorCode: ApiNotFound})
 }
 
 func (server *Server) createResponse(baseResponse interface{}) Response {

@@ -6,9 +6,14 @@ import (
 	"testing"
 )
 
+type B struct {
+	Test string
+}
+
 type A struct {
 	UserId string `pgway_v:"true"`
 	Name   string
+	A      []string
 }
 
 func sampleFunc(a A, request *Request) interface{} {
@@ -22,6 +27,7 @@ func TestCallFunc_Normal(t *testing.T) {
 	data := map[string]string{
 		"user_id": userId,
 		"name":    "paragura",
+		"a":       "[{\"Test\" : \"fe\"},{\"Test\" : \"fef\"}]",
 	}
 
 	// test

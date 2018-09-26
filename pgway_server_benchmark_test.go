@@ -45,6 +45,7 @@ func BenchmarkPgwayServer_Handle(b *testing.B) {
 
 	queryParameters := map[string]string{}
 	queryParameters["name"] = "namae"
+	queryParameters["ids"] = "1,2,3,4,5"
 
 	request := &Request{
 		Path:            "/test1/fefe/aaaa",
@@ -55,24 +56,6 @@ func BenchmarkPgwayServer_Handle(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		serverBenchmark.handle(request)
-	}
-
-}
-
-func BenchmarkPgwayServer_HandleOld(b *testing.B) {
-
-	queryParameters := map[string]string{}
-	queryParameters["name"] = "namae"
-
-	request := &Request{
-		Path:            "/test1/fefe/aaaa",
-		HTTPMethod:      http.MethodGet,
-		QueryParameters: queryParameters,
-		Body:            "{\"body\" : \"body\" }",
-	}
-
-	for i := 0; i < b.N; i++ {
-		serverBenchmark.handleOld(request)
 	}
 
 }
