@@ -97,8 +97,6 @@ func CreateInstance(p r.Type, data map[string]string, bindingNamingStrategy Bind
 			// naming conversion type (camel, snake, keep)
 		}
 
-		//
-		// TODO: string 以外
 		baseValue := data[keyName]
 		i, err := fetchValue(baseValue, objField.Type())
 		if err != nil {
@@ -153,19 +151,19 @@ func fetchValue(baseStr string, t r.Type) (interface{}, error) {
 		if isAllowedKind(arrayObjType.Kind()) {
 			sli := r.MakeSlice(r.SliceOf(arrayObjType), 0, 0)
 			/*
-						slice := r.MakeSlice(r.SliceOf(arrayObjType), 0,0)
-						// Create a pointer to a slice value and set it to the slice
-						slicePtr := r.New(t)
-						slicePtr.Elem().Set(slice)
-						json.Unmarshal([]byte(baseStr),slicePtr.Interface())
-						return slicePtr.Elem().Interface(),nil
-						:WHY?
-			panic: reflect.Set: value of type []interface {} is not assignable to type []pgway.B [recovered]
-				panic: reflect.Set: value of type []interface {} is not assignable to type []pgway.B
-						slice := r.MakeSlice(r.SliceOf(arrayObjType), 0,0)
-						i := slice.Interface()
-						err := json.Unmarshal([]byte(baseStr),&i)
-						return i,err
+							slice := r.MakeSlice(r.SliceOf(arrayObjType), 0,0)
+							// Create a pointer to a slice value and set it to the slice
+							slicePtr := r.New(t)
+							slicePtr.Elem().Set(slice)
+							json.Unmarshal([]byte(baseStr),slicePtr.Interface())
+							return slicePtr.Elem().Interface(),nil
+							:WHY?
+				panic: reflect.Set: value of type []interface {} is not assignable to type []pgway.B [recovered]
+					panic: reflect.Set: value of type []interface {} is not assignable to type []pgway.B
+							slice := r.MakeSlice(r.SliceOf(arrayObjType), 0,0)
+							i := slice.Interface()
+							err := json.Unmarshal([]byte(baseStr),&i)
+							return i,err
 			*/
 			//_ := json.Unmarshal([]byte(baseStr),&arr)
 			values := strings.Split(baseStr, ",")

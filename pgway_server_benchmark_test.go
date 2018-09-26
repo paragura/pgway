@@ -59,21 +59,3 @@ func BenchmarkPgwayServer_Handle(b *testing.B) {
 	}
 
 }
-
-func BenchmarkPgwayServer_HandleOld(b *testing.B) {
-
-	queryParameters := map[string]string{}
-	queryParameters["name"] = "namae"
-
-	request := &Request{
-		Path:            "/test1/fefe/aaaa",
-		HTTPMethod:      http.MethodGet,
-		QueryParameters: queryParameters,
-		Body:            "{\"body\" : \"body\" }",
-	}
-
-	for i := 0; i < b.N; i++ {
-		serverBenchmark.handleOld(request)
-	}
-
-}
