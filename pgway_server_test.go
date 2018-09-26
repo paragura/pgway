@@ -11,6 +11,7 @@ type testStruct struct {
 	UserId string
 	Name   string
 	Body   string
+	Ids    []int
 }
 
 type testResponse struct {

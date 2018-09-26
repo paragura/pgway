@@ -45,6 +45,7 @@ func BenchmarkPgwayServer_Handle(b *testing.B) {
 
 	queryParameters := map[string]string{}
 	queryParameters["name"] = "namae"
+	queryParameters["ids"] = "1,2,3,4,5"
 
 	request := &Request{
 		Path:            "/test1/fefe/aaaa",

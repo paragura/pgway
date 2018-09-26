@@ -9,7 +9,7 @@ import (
 type Server struct {
 	Apis                      Apis
 	ValidationFailedProcessor func([]string) interface{} // called when validation failed
-	BindingNamingStrategy     PgwayBindingNamingStrategy
+	BindingNamingStrategy     BindingNamingStrategy
 	Tree                      RouteTree
 	Compiled                  bool
 }
