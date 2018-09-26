@@ -139,7 +139,6 @@ func fetchValue(baseStr string, t r.Type) (interface{}, error) {
 		// TODO: post -> json support
 		i := r.New(t).Interface()
 		err := json.Unmarshal([]byte(baseStr), i)
-		println("e" + r.ValueOf(i).Type().String())
 		if val := r.ValueOf(i); val.Kind() == r.Ptr {
 			return val.Elem().Interface(), err
 		} else {
