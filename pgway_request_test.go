@@ -27,16 +27,35 @@ func TestPgwayRequest_InitRequestData_POST(t *testing.T) {
 	queryParameters := map[string]string{}
 	queryParameters["query"] = "queryData"
 
+	pathVariables := map[string]string{}
+	pathVariables["path"] = "pathData"
+
 	request := Request{
 		HTTPMethod:      http.MethodPost,
 		QueryParameters: queryParameters,
-		Body:            "{ \"body\" : \"bodyData\" }",
+		PathVariables:   pathVariables,
 	}
 
 	expectedData := map[string]string{}
 	expectedData["query"] = "queryData"
-	expectedData["body"] = "bodyData"
+	expectedData["path"] = "pathData"
 
 	assert.NoError(t, request.initRequestData())
 	assert.Equal(t, expectedData, request.RequestData)
+}
+
+func TestRequest_BindWithPostJson(t *testing.T) {
+	a := &struct {
+		UserId int
+		Name   string
+	}{}
+
+	request := Request{
+		HTTPMethod: http.MethodPost,
+		Body:       "{ \"UserId\": 1, \"Name\" : \"namae\" }",
+	}
+	assert.NoError(t, request.BindWithPostJson(a))
+	assert.Equal(t, a.UserId, 1)
+	assert.Equal(t, a.Name, "namae")
+
 }

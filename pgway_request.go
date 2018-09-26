@@ -2,6 +2,7 @@ package pgway
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -15,6 +16,14 @@ type Request struct {
 	Body            string            //
 }
 
+func (req *Request) BindWithPostJson(obj interface{}) error {
+	if req.HTTPMethod == http.MethodPost {
+		return json.Unmarshal([]byte(req.Body), obj)
+	} else {
+		return errors.New("[PGWay][request]this is not a POST request")
+	}
+}
+
 //
 // integrate queryData with postData
 func (req *Request) initRequestData() error {
@@ -24,23 +33,23 @@ func (req *Request) initRequestData() error {
 	for key, value := range req.QueryParameters {
 		data[key] = value
 	}
+	/*
+		if req.HTTPMethod == http.MethodPost {
 
-	if req.HTTPMethod == http.MethodPost {
+			postData := map[string]string{}
+			//
+			// MARK: currentry not suported form type post data (exp a=b\n c=d,,,)
+			err := json.Unmarshal([]byte(req.Body), &postData)
 
-		postData := map[string]string{}
-		//
-		// MARK: currentry not suported form type post data (exp a=b\n c=d,,,)
-		err := json.Unmarshal([]byte(req.Body), &postData)
+			if err != nil {
+				return err
+			}
 
-		if err != nil {
-			return err
+			for key, value := range postData {
+				data[key] = value
+			}
 		}
-
-		for key, value := range postData {
-			data[key] = value
-		}
-	}
-
+	*/
 	for key, value := range req.PathVariables {
 		data[key] = value
 	}

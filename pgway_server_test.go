@@ -42,12 +42,12 @@ func TestPgwayServer_Handle(t *testing.T) {
 
 	queryParameters := map[string]string{}
 	queryParameters["user_id"] = "1"
+	queryParameters["name"] = "namae"
 
 	request := &Request{
 		Path:            "/test2/fefe",
 		HTTPMethod:      http.MethodPost,
 		QueryParameters: queryParameters,
-		Body:            "{\"name\" : \"namae\" }",
 	}
 
 	server := Server{
