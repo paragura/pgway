@@ -206,7 +206,10 @@ func ValidateInstance(obj interface{}) []string {
 }
 
 func validateField(field r.Value) bool {
-	//
-	// TODO: string 以外
-	return len(field.String()) > 0
+	switch t := field.Type(); t.Kind() {
+	case r.String:
+		return len(field.String()) > 0
+	default:
+		return true
+	}
 }
